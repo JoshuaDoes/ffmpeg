@@ -48,25 +48,34 @@ func NewFFmpeg(codec, format string) *FFmpeg {
 	ff.metadata = make(map[string]string)
 	ff.codecOut = codec
 	ff.formatOut = format
-	ff.audioIn = crunchio.NewBuffer("in")
-	ff.audioOut = crunchio.NewBuffer("out")
-	ff.stats = crunchio.NewBuffer("stats")
+	ff.SetInput("")
+	ff.SetOutput("")
+	ff.SetBufferStats(crunchio.NewBuffer("stats"))
 	return ff
 }
 
-func (ff *FFmpeg) AudioIn() *crunchio.Buffer {
+func (ff *FFmpeg) SetBufferAudioIn(buffer *crunchio.Buffer) {
+	ff.audioIn = buffer
+}
+func (ff *FFmpeg) GetBufferAudioIn() *crunchio.Buffer {
 	if ff.audioIn != nil {
 		return ff.audioIn.Reference()
 	}
 	return nil
 }
-func (ff *FFmpeg) AudioOut() *crunchio.Buffer {
+func (ff *FFmpeg) SetBufferAudioOut(buffer *crunchio.Buffer) {
+	ff.audioOut = buffer
+}
+func (ff *FFmpeg) GetBufferAudioOut() *crunchio.Buffer {
 	if ff.audioOut != nil {
 		return ff.audioOut.Reference()
 	}
 	return nil
 }
-func (ff *FFmpeg) Stats() *crunchio.Buffer {
+func (ff *FFmpeg) SetBufferStats(buffer *crunchio.Buffer) {
+	ff.stats = buffer
+}
+func (ff *FFmpeg) GetBufferStats() *crunchio.Buffer {
 	if ff.stats != nil {
 		return ff.stats.Reference()
 	}
@@ -80,13 +89,13 @@ func (ff *FFmpeg) Start() error {
 	}
 
 	process := exec.Command("ffmpeg", ff.Arguments()...)
-	if audioIn := ff.AudioIn(); audioIn != nil {
+	if audioIn := ff.GetBufferAudioIn(); audioIn != nil {
 		process.Stdin = audioIn
 	}
-	if audioOut := ff.AudioOut(); audioOut != nil {
+	if audioOut := ff.GetBufferAudioOut(); audioOut != nil {
 		process.Stdout = audioOut
 	}
-	if stats := ff.Stats(); stats != nil {
+	if stats := ff.GetBufferStats(); stats != nil {
 		process.Stderr = stats
 	}
 	ff.process = process
@@ -191,9 +200,19 @@ func (ff *FFmpeg) SetBufferSize(n int64) {
 
 func (ff *FFmpeg) SetInput(input string) {
 	ff.input = input
+	if input != "" {
+		ff.SetBufferAudioIn(nil)
+	} else {
+		ff.SetBufferAudioIn(crunchio.NewBuffer("in"))
+	}
 }
 func (ff *FFmpeg) SetOutput(output string) {
 	ff.output = output
+	if output != "" {
+		ff.SetBufferAudioOut(nil)
+	} else {
+		ff.SetBufferAudioOut(crunchio.NewBuffer("out"))
+	}
 }
 func (ff *FFmpeg) SetInputCodec(codec string) {
 	ff.codecIn = codec
