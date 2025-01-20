@@ -1,13 +1,13 @@
 package ffmpeg
 
 type Filter struct {
-	ff       *FFmpeg
+	ff       *Ffmpeg
 	chanIn   []int           //the input channels to use from the source
 	chanOut  []int           //the output channels to use for the destination
 	settings []FilterSetting //the chain of filters to apply
 }
 
-func (ff *FFmpeg) NewFilter() *Filter {
+func (ff *Ffmpeg) NewFilter() *Filter {
 	f := new(Filter)
 	f.ff = ff
 	f.chanIn = make([]int, 0)

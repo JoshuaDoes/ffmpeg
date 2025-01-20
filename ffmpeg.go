@@ -13,11 +13,11 @@ var (
 	ErrorAlreadyRunning error = fmt.Errorf("ffmpeg: already running")
 )
 
-type FFmpeg struct {
+type Ffmpeg struct {
 	running   bool
 	process   *exec.Cmd
 	errors    []error
-	onExit    func(ff *FFmpeg)
+	onExit    func(ff *Ffmpeg)
 	onExitRan bool
 
 	input, output           string
@@ -40,8 +40,8 @@ type FFmpeg struct {
 	bufSize int64         //calculated buffer size of each channel in bytes
 }
 
-func NewFFmpeg(codec, format string) *FFmpeg {
-	ff := new(FFmpeg)
+func NewFFmpeg(codec, format string) *Ffmpeg {
+	ff := new(Ffmpeg)
 	ff.errors = make([]error, 0)
 	ff.buffer = make([]byte, 0)
 	ff.filters = make([]*Filter, 0)
@@ -54,34 +54,34 @@ func NewFFmpeg(codec, format string) *FFmpeg {
 	return ff
 }
 
-func (ff *FFmpeg) SetBufferAudioIn(buffer *crunchio.Buffer) {
+func (ff *Ffmpeg) SetBufferAudioIn(buffer *crunchio.Buffer) {
 	ff.audioIn = buffer
 	if buffer != nil {
 		ff.input = ""
 	}
 }
-func (ff *FFmpeg) GetBufferAudioIn() *crunchio.Buffer {
+func (ff *Ffmpeg) GetBufferAudioIn() *crunchio.Buffer {
 	if ff.audioIn != nil {
 		return ff.audioIn.Reference()
 	}
 	return nil
 }
-func (ff *FFmpeg) SetBufferAudioOut(buffer *crunchio.Buffer) {
+func (ff *Ffmpeg) SetBufferAudioOut(buffer *crunchio.Buffer) {
 	ff.audioOut = buffer
 	if buffer != nil {
 		ff.output = ""
 	}
 }
-func (ff *FFmpeg) GetBufferAudioOut() *crunchio.Buffer {
+func (ff *Ffmpeg) GetBufferAudioOut() *crunchio.Buffer {
 	if ff.audioOut != nil {
 		return ff.audioOut.Reference()
 	}
 	return nil
 }
-func (ff *FFmpeg) SetBufferStats(buffer *crunchio.Buffer) {
+func (ff *Ffmpeg) SetBufferStats(buffer *crunchio.Buffer) {
 	ff.stats = buffer
 }
-func (ff *FFmpeg) GetBufferStats() *crunchio.Buffer {
+func (ff *Ffmpeg) GetBufferStats() *crunchio.Buffer {
 	if ff.stats != nil {
 		return ff.stats.Reference()
 	}
@@ -89,7 +89,7 @@ func (ff *FFmpeg) GetBufferStats() *crunchio.Buffer {
 }
 
 // Start begins execution of the ffmpeg process and is non-blocking.
-func (ff *FFmpeg) Start() error {
+func (ff *Ffmpeg) Start() error {
 	if ff.IsRunning() {
 		return ErrorAlreadyRunning
 	}
@@ -110,7 +110,7 @@ func (ff *FFmpeg) Start() error {
 	return nil
 }
 
-func (ff *FFmpeg) spawn() {
+func (ff *Ffmpeg) spawn() {
 	if err := ff.process.Start(); err != nil {
 		ff.error(err)
 		return
@@ -130,7 +130,7 @@ func (ff *FFmpeg) spawn() {
 
 // Close stops the ffmpeg process and cleans up remaining resources.
 // Must be called on loop until no error is returned.
-func (ff *FFmpeg) Close() error {
+func (ff *Ffmpeg) Close() error {
 	if ff.process != nil {
 		if err := ff.process.Process.Kill(); err != nil {
 			return err
@@ -148,14 +148,14 @@ func (ff *FFmpeg) Close() error {
 }
 
 // IsRunning returns true if ffmpeg is currently running.
-func (ff *FFmpeg) IsRunning() bool {
+func (ff *Ffmpeg) IsRunning() bool {
 	if ff.process == nil {
 		return false
 	}
 	return ff.running
 }
 
-func (ff *FFmpeg) Wait() {
+func (ff *Ffmpeg) Wait() {
 	for {
 		if !ff.IsRunning() {
 			break
@@ -164,11 +164,11 @@ func (ff *FFmpeg) Wait() {
 }
 
 // SetOnExit sets a callback handler for when ffmpeg exits.
-func (ff *FFmpeg) SetOnExit(fnc func(ff *FFmpeg)) {
+func (ff *Ffmpeg) SetOnExit(fnc func(ff *Ffmpeg)) {
 	ff.onExit = fnc
 }
 
-func (ff *FFmpeg) SetBufferLength(d time.Duration) {
+func (ff *Ffmpeg) SetBufferLength(d time.Duration) {
 	ff.bufTime = d
 	sampleRate := int64(ff.rateOut)
 	channels := int64(ff.channelsOut)
@@ -186,7 +186,7 @@ func (ff *FFmpeg) SetBufferLength(d time.Duration) {
 	ff.bufSize = (int64(d) * sampleRate * channels * bytesPerSample) / int64(time.Second)
 }
 
-func (ff *FFmpeg) SetBufferSize(n int64) {
+func (ff *Ffmpeg) SetBufferSize(n int64) {
 	ff.bufSize = n
 	sampleRate := int64(ff.rateOut)
 	channels := int64(ff.channelsOut)
@@ -204,7 +204,7 @@ func (ff *FFmpeg) SetBufferSize(n int64) {
 	ff.bufTime = time.Duration((n * int64(time.Second)) / (sampleRate * channels * bytesPerSample))
 }
 
-func (ff *FFmpeg) SetInput(input string) {
+func (ff *Ffmpeg) SetInput(input string) {
 	ff.input = input
 	if input != "" {
 		ff.SetBufferAudioIn(nil)
@@ -212,7 +212,7 @@ func (ff *FFmpeg) SetInput(input string) {
 		ff.SetBufferAudioIn(crunchio.NewBuffer("in"))
 	}
 }
-func (ff *FFmpeg) SetOutput(output string) {
+func (ff *Ffmpeg) SetOutput(output string) {
 	ff.output = output
 	if output != "" {
 		ff.SetBufferAudioOut(nil)
@@ -220,31 +220,31 @@ func (ff *FFmpeg) SetOutput(output string) {
 		ff.SetBufferAudioOut(crunchio.NewBuffer("out"))
 	}
 }
-func (ff *FFmpeg) SetInputCodec(codec string) {
+func (ff *Ffmpeg) SetInputCodec(codec string) {
 	ff.codecIn = codec
 }
-func (ff *FFmpeg) SetOutputCodec(codec string) {
+func (ff *Ffmpeg) SetOutputCodec(codec string) {
 	ff.codecOut = codec
 }
-func (ff *FFmpeg) SetInputFormat(format string) {
+func (ff *Ffmpeg) SetInputFormat(format string) {
 	ff.formatIn = format
 }
-func (ff *FFmpeg) SetOutputFormat(format string) {
+func (ff *Ffmpeg) SetOutputFormat(format string) {
 	ff.formatOut = format
 }
-func (ff *FFmpeg) SetInputRate(rate int) {
+func (ff *Ffmpeg) SetInputRate(rate int) {
 	ff.rateIn = rate
 }
-func (ff *FFmpeg) SetOutputRate(rate int) {
+func (ff *Ffmpeg) SetOutputRate(rate int) {
 	ff.rateOut = rate
 }
-func (ff *FFmpeg) SetOutputBitrate(bitrate int) {
+func (ff *Ffmpeg) SetOutputBitrate(bitrate int) {
 	ff.bitrateOut = bitrate
 }
-func (ff *FFmpeg) SetThreads(threads int) {
+func (ff *Ffmpeg) SetThreads(threads int) {
 	ff.threads = threads
 }
-func (ff *FFmpeg) SetPrecision(precision string) {
+func (ff *Ffmpeg) SetPrecision(precision string) {
 	ff.precision = precision
 	if len(ff.filters) > 0 {
 		for i := 0; i < len(ff.filters); i++ {
@@ -252,18 +252,18 @@ func (ff *FFmpeg) SetPrecision(precision string) {
 		}
 	}
 }
-func (ff *FFmpeg) SetMetadata(key, value string) {
+func (ff *Ffmpeg) SetMetadata(key, value string) {
 	ff.metadata[key] = value
 }
 
-func (ff *FFmpeg) SetInputChannels(channels int) {
+func (ff *Ffmpeg) SetInputChannels(channels int) {
 	ff.channelsIn = channels
 }
-func (ff *FFmpeg) SetOutputChannels(channels int) {
+func (ff *Ffmpeg) SetOutputChannels(channels int) {
 	ff.channelsOut = channels
 }
 
-func (ff *FFmpeg) Arguments() []string {
+func (ff *Ffmpeg) Arguments() []string {
 	//Prepare list of args
 	args := make([]string, 0)
 	args = append(args, "-hide_banner", "-stats")
@@ -327,7 +327,7 @@ func (ff *FFmpeg) Arguments() []string {
 	return args
 }
 
-func (ff *FFmpeg) generateFilterSetting(fs FilterSetting) string {
+func (ff *Ffmpeg) generateFilterSetting(fs FilterSetting) string {
 	str := fs.Name()
 	s := fs.Settings()
 	if len(s) > 0 {
@@ -341,7 +341,7 @@ func (ff *FFmpeg) generateFilterSetting(fs FilterSetting) string {
 	return str
 }
 
-func (ff *FFmpeg) generateFilterComplex(name string) string {
+func (ff *Ffmpeg) generateFilterComplex(name string) string {
 	filters := make([]string, len(ff.filters))
 
 	fc := "[0:a]asplit"
@@ -376,17 +376,17 @@ func (ff *FFmpeg) generateFilterComplex(name string) string {
 	return fc
 }
 
-func (ff *FFmpeg) String() string {
+func (ff *Ffmpeg) String() string {
 	return fmt.Sprintf("ffmpeg\n%s", strings.Join(ff.Arguments(), "\n"))
 }
 
-func (ff *FFmpeg) error(err error) {
+func (ff *Ffmpeg) error(err error) {
 	if err != nil {
 		ff.errors = append(ff.errors, err)
 	}
 }
 
-func (ff *FFmpeg) Error() error {
+func (ff *Ffmpeg) Error() error {
 	errs := ""
 	for i := 0; i < len(ff.errors); i++ {
 		errs += fmt.Sprintf("%v\n", ff.errors[i])
