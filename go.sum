@@ -6,6 +6,8 @@ github.com/JoshuaDoes/crunchio v0.0.0-20250120020830-711f688465bc h1:bBr4e9V7buv
 github.com/JoshuaDoes/crunchio v0.0.0-20250120020830-711f688465bc/go.mod h1:Zk8lv1MlNNb5WpMcNSr8uBgleoE5G3PpXi6MD3JImOA=
 github.com/JoshuaDoes/crunchio v0.0.2-0.20250120031223-4b76002b4f84 h1:Q5DqPft9OY1F8yo7C+7V2oWceT0GnBo35dphIBEhNRg=
 github.com/JoshuaDoes/crunchio v0.0.2-0.20250120031223-4b76002b4f84/go.mod h1:Zk8lv1MlNNb5WpMcNSr8uBgleoE5G3PpXi6MD3JImOA=
+github.com/JoshuaDoes/crunchio v0.0.3-0.20250120233618-bb0e090b1d9c h1:Ge/SL2UQSGVVnJuMqosCOyJUQL7AMG++QFP8v9AumKQ=
+github.com/JoshuaDoes/crunchio v0.0.3-0.20250120233618-bb0e090b1d9c/go.mod h1:Zk8lv1MlNNb5WpMcNSr8uBgleoE5G3PpXi6MD3JImOA=
 github.com/google/go-cmp v0.5.6 h1:BKbKCqvP6I+rmFHt06ZmyQtvB8xAkWdhFyr0ZUNZcxQ=
 github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/superwhiskers/crunch/v3 v3.5.7 h1:N9RLxaR65C36i26BUIpzPXGy2f6pQ7wisu2bawbKNqg=
