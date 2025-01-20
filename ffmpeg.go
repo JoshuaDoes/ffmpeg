@@ -1,4 +1,4 @@
-package main
+package ffmpeg
 
 import (
 	"github.com/JoshuaDoes/crunchio"

@@ -1,4 +1,4 @@
-package main
+package ffmpeg
 
 type Filter struct {
 	ff       *FFmpeg

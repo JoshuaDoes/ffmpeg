@@ -2,6 +2,8 @@ github.com/JoshuaDoes/crunchio v0.0.0-20250119012423-b0cceb64328c h1:mMAU0cVKs2Y
 github.com/JoshuaDoes/crunchio v0.0.0-20250119012423-b0cceb64328c/go.mod h1:Zk8lv1MlNNb5WpMcNSr8uBgleoE5G3PpXi6MD3JImOA=
 github.com/JoshuaDoes/crunchio v0.0.0-20250120020351-40a37cb10461 h1:b02KHFvEFnZb8VlYZAh5fHvdweff8g2p2Nk0w/DmgGc=
 github.com/JoshuaDoes/crunchio v0.0.0-20250120020351-40a37cb10461/go.mod h1:Zk8lv1MlNNb5WpMcNSr8uBgleoE5G3PpXi6MD3JImOA=
+github.com/JoshuaDoes/crunchio v0.0.0-20250120020830-711f688465bc h1:bBr4e9V7buvresm0L13G1S4IUCN1FUkfeZmjoyyeVGc=
+github.com/JoshuaDoes/crunchio v0.0.0-20250120020830-711f688465bc/go.mod h1:Zk8lv1MlNNb5WpMcNSr8uBgleoE5G3PpXi6MD3JImOA=
 github.com/google/go-cmp v0.5.6 h1:BKbKCqvP6I+rmFHt06ZmyQtvB8xAkWdhFyr0ZUNZcxQ=
 github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
 github.com/superwhiskers/crunch/v3 v3.5.7 h1:N9RLxaR65C36i26BUIpzPXGy2f6pQ7wisu2bawbKNqg=
