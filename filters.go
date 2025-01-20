@@ -111,13 +111,6 @@ func (f *FilterVolume) Set(key, val string, vals ...any) {
 	f.filterBase.Set(key, val, vals...)
 }
 
-func NewFilterVolumePercentage(volume float64) *FilterVolume {
-	f := new(FilterVolume)
-	f.filterBase = newFilterBase()
-	f.Set("volume", "%f", volume)
-	return f
-}
-
 func NewFilterVolumeGain(gain float64) *FilterVolume {
 	f := new(FilterVolume)
 	f.filterBase = newFilterBase()
