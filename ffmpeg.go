@@ -304,9 +304,10 @@ func (ff *Ffmpeg) Arguments() []string {
 	args = append(args, "-i", input)
 
 	//Filters
-	args = append(args, "-filter_complex")
-	args = append(args, ff.generateFilterComplex("a"))
-	args = append(args, "-map", "[a]")
+	if len(ff.filters) > 0 {
+		args = append(args, "-filter_complex", ff.generateFilterComplex("a"))
+		args = append(args, "-map", "[a]")
+	}
 
 	//Metadata
 	for key, val := range ff.metadata {
