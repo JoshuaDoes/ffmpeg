@@ -186,13 +186,11 @@ func (ff *Ffmpeg) SetBufferLength(d time.Duration) {
 	channels := int64(ff.channelsOut)
 	var bytesPerSample int64
 
-	switch ff.precision {
-	case "f64":
+	switch ff.formatOut {
+	case "f64le":
 		bytesPerSample = 8
-	case "f32":
+	case "f32le":
 		bytesPerSample = 4
-	default:
-		bytesPerSample = 4 // Default to 4 bytes per sample
 	}
 
 	ff.bufSize = (int64(d) * sampleRate * channels * bytesPerSample) / int64(time.Second)
@@ -204,13 +202,11 @@ func (ff *Ffmpeg) SetBufferSize(n int64) {
 	channels := int64(ff.channelsOut)
 	var bytesPerSample int64
 
-	switch ff.precision {
-	case "f64":
+	switch ff.formatOut {
+	case "f64le":
 		bytesPerSample = 8
-	case "f32":
+	case "f32le":
 		bytesPerSample = 4
-	default:
-		bytesPerSample = 4 // Default to 4 bytes per sample
 	}
 
 	ff.bufTime = time.Duration((n * int64(time.Second)) / (sampleRate * channels * bytesPerSample))
@@ -408,4 +404,44 @@ func (ff *Ffmpeg) Error() error {
 	}
 	errs = errs[:len(errs)-1]
 	return fmt.Errorf("%s", errs)
+}
+
+func (ff *Ffmpeg) ReadChannels() []float64 {
+	if ff.audioOut != nil {
+		switch ff.formatOut {
+		case "f32le":
+			sampleBytes := make([]byte, 4*ff.channelsOut)
+			if _, err := ff.audioOut.Read(sampleBytes); err != nil {
+				return nil
+			}
+			samples := crunchio.NewBuffer("", sampleBytes).Buffer().ReadF32LENext(int64(ff.channelsOut))
+			samples64 := make([]float64, len(samples))
+			for i := 0; i < len(samples); i++ {
+				samples64[i] = float64(samples[i])
+			}
+			return samples64
+		case "f64le":
+			sampleBytes := make([]byte, 8*ff.channelsOut)
+			if _, err := ff.audioOut.Read(sampleBytes); err != nil {
+				return nil
+			}
+			return crunchio.NewBuffer("", sampleBytes).Buffer().ReadF64LENext(int64(ff.channelsOut))
+		}
+	}
+	return nil
+}
+
+func (ff *Ffmpeg) WriteChannels(samples []float64) {
+	if ff.audioIn != nil {
+		switch ff.formatIn {
+		case "f32le":
+			samples32 := make([]float32, len(samples))
+			for i := 0; i < len(samples); i++ {
+				samples32[i] = float32(samples[i])
+			}
+			ff.audioIn.WriteAbstract(samples32)
+		case "f64le":
+			ff.audioIn.WriteAbstract(samples)
+		}
+	}
 }
