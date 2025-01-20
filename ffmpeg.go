@@ -271,7 +271,7 @@ func (ff *FFmpeg) Arguments() []string {
 	//Determine real input and output locations
 	input := ff.input
 	if input == "" {
-		input = "-"
+		input = "pipe:0"
 	}
 	output := ff.output
 	if output == "" {
