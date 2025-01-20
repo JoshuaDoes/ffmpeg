@@ -155,12 +155,18 @@ func (ff *Ffmpeg) IsRunning() bool {
 	return ff.running
 }
 
-func (ff *Ffmpeg) Wait() {
+func (ff *Ffmpeg) Run() error {
+	if !ff.IsRunning() {
+		if err := ff.Start(); err != nil {
+			return err
+		}
+	}
 	for {
 		if !ff.IsRunning() {
 			break
 		}
 	}
+	return nil
 }
 
 // SetOnExit sets a callback handler for when ffmpeg exits.
