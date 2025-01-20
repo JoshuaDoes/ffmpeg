@@ -56,6 +56,9 @@ func NewFFmpeg(codec, format string) *FFmpeg {
 
 func (ff *FFmpeg) SetBufferAudioIn(buffer *crunchio.Buffer) {
 	ff.audioIn = buffer
+	if buffer != nil {
+		ff.input = ""
+	}
 }
 func (ff *FFmpeg) GetBufferAudioIn() *crunchio.Buffer {
 	if ff.audioIn != nil {
@@ -65,6 +68,9 @@ func (ff *FFmpeg) GetBufferAudioIn() *crunchio.Buffer {
 }
 func (ff *FFmpeg) SetBufferAudioOut(buffer *crunchio.Buffer) {
 	ff.audioOut = buffer
+	if buffer != nil {
+		ff.output = ""
+	}
 }
 func (ff *FFmpeg) GetBufferAudioOut() *crunchio.Buffer {
 	if ff.audioOut != nil {
