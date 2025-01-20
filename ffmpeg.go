@@ -20,6 +20,7 @@ type Ffmpeg struct {
 	onExit    func(ff *Ffmpeg)
 	onExitRan bool
 
+	ffmpeg                  string
 	input, output           string
 	codecIn, codecOut       string
 	formatIn, formatOut     string
@@ -48,10 +49,15 @@ func NewFFmpeg(codec, format string) *Ffmpeg {
 	ff.metadata = make(map[string]string)
 	ff.codecOut = codec
 	ff.formatOut = format
+	ff.SetFFmpeg("ffmpeg")
 	ff.SetInput("")
 	ff.SetOutput("")
 	ff.SetBufferStats(crunchio.NewBuffer("stats"))
 	return ff
+}
+
+func (ff *Ffmpeg) SetFFmpeg(path string) {
+	ff.ffmpeg = path
 }
 
 func (ff *Ffmpeg) SetBufferAudioIn(buffer *crunchio.Buffer) {
@@ -94,7 +100,7 @@ func (ff *Ffmpeg) Start() error {
 		return ErrorAlreadyRunning
 	}
 
-	process := exec.Command("ffmpeg", ff.Arguments()...)
+	process := exec.Command(ff.ffmpeg, ff.Arguments()...)
 	if audioIn := ff.GetBufferAudioIn(); audioIn != nil {
 		process.Stdin = audioIn
 	}
