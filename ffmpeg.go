@@ -56,6 +56,10 @@ func NewFFmpeg(codec, format string) *Ffmpeg {
 	return ff
 }
 
+func (ff *Ffmpeg) GetFFmpeg() string {
+	return ff.ffmpeg
+}
+
 func (ff *Ffmpeg) SetFFmpeg(path string) {
 	ff.ffmpeg = path
 }
