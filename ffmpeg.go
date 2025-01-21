@@ -112,7 +112,7 @@ func (ff *Ffmpeg) Start() error {
 	}
 	ff.process = process
 
-	ff.spawn()
+	go ff.spawn()
 	return nil
 }
 
