@@ -1,6 +1,9 @@
 package ffmpeg
 
 import (
+	"os"
+	"runtime"
+
 	"github.com/JoshuaDoes/crunchio"
 
 	"fmt"
@@ -20,7 +23,7 @@ type Ffmpeg struct {
 	onExit    func(ff *Ffmpeg)
 	onExitRan bool
 
-	ffmpeg                  string
+	ffmpeg, libraryPath     string
 	input, output           string
 	codecIn, codecOut       string
 	formatIn, formatOut     string
@@ -64,6 +67,14 @@ func (ff *Ffmpeg) SetFFmpeg(path string) {
 	ff.ffmpeg = path
 }
 
+func (ff *Ffmpeg) GetLibraryPath() string {
+	return ff.libraryPath
+}
+
+func (ff *Ffmpeg) SetLibraryPath(path string) {
+	ff.libraryPath = path
+}
+
 func (ff *Ffmpeg) SetBufferAudioIn(buffer *crunchio.Buffer) {
 	ff.audioIn = buffer
 	if buffer != nil {
@@ -98,13 +109,49 @@ func (ff *Ffmpeg) GetBufferStats() *crunchio.Buffer {
 	return nil
 }
 
-// Start begins execution of the ffmpeg process and is non-blocking.
+// Start begins executing the ffmpeg process and is non-blocking.
 func (ff *Ffmpeg) Start() error {
 	if ff.IsRunning() {
 		return ErrorAlreadyRunning
 	}
 
 	process := exec.Command(ff.ffmpeg, ff.Arguments()...)
+
+	//Add library path to the environment
+	if libraryPath := ff.GetLibraryPath(); libraryPath != "" {
+		//Copy current environment variables
+		env := os.Environ()
+
+		//Determine platform-specific library path environment variable
+		var envVar, pathSeparator string
+		switch runtime.GOOS {
+		case "linux", "darwin": //Linux and macOS
+			envVar = "LD_LIBRARY_PATH"
+			pathSeparator = ":"
+		case "windows": //Windows
+			envVar = "PATH"
+			pathSeparator = ";"
+		default:
+			return fmt.Errorf("unsupported platform: %s", runtime.GOOS)
+		}
+
+		//Append the library path
+		found := false
+		for i, e := range env {
+			if strings.HasPrefix(e, envVar+"=") {
+				env[i] = fmt.Sprintf("%s=%s%s%s", envVar, libraryPath, pathSeparator, strings.TrimPrefix(e, envVar+"="))
+				found = true
+				break
+			}
+		}
+		if !found {
+			env = append(env, fmt.Sprintf("%s=%s", envVar, libraryPath))
+		}
+
+		process.Env = env
+	}
+
+	//Associate the stdio buffers
 	if audioIn := ff.GetBufferAudioIn(); audioIn != nil {
 		process.Stdin = audioIn
 	}
@@ -114,13 +161,14 @@ func (ff *Ffmpeg) Start() error {
 	if stats := ff.GetBufferStats(); stats != nil {
 		process.Stderr = stats
 	}
-	ff.process = process
 
-	ff.spawn()
+	//Start the ffmpeg process
+	ff.process = process
+	ff.thread()
 	return nil
 }
 
-func (ff *Ffmpeg) spawn() {
+func (ff *Ffmpeg) thread() {
 	if err := ff.process.Start(); err != nil {
 		ff.error(err)
 		return
