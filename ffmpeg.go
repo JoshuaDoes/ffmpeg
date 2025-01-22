@@ -421,11 +421,16 @@ func (ff *Ffmpeg) generateFilterComplex(name string) string {
 	filters := make([]string, len(ff.filters))
 
 	fc := "[0:a]asplit"
-	for i := 0; i < len(ff.filters); i++ {
-		filters[i] = fmt.Sprintf("[f%d_0]", i)
-		fc += filters[i]
+	if len(filters) > 1 {
+		for i := 0; i < len(ff.filters); i++ {
+			filters[i] = fmt.Sprintf("[f%d_0]", i)
+			fc += filters[i]
+		}
+		fc += ";"
+	} else {
+		fc = ""
+		filters[0] = "[0:a]"
 	}
-	fc += ";"
 
 	for i := 0; i < len(ff.filters); i++ {
 		f := ff.filters[i]
