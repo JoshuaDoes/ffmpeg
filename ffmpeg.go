@@ -23,6 +23,7 @@ type Ffmpeg struct {
 	onExit    func(ff *Ffmpeg)
 	onExitRan bool
 
+	name                    string
 	ffmpeg, libraryPath     string
 	input, output           string
 	codecIn, codecOut       string
@@ -57,6 +58,14 @@ func NewFFmpeg(codec, format string) *Ffmpeg {
 	ff.SetOutput("")
 	ff.SetBufferStats(crunchio.NewBuffer("stats"))
 	return ff
+}
+
+func (ff *Ffmpeg) GetName() string {
+	return ff.name
+}
+
+func (ff *Ffmpeg) SetName(name string) {
+	ff.name = name
 }
 
 func (ff *Ffmpeg) GetFFmpeg() string {
