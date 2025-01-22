@@ -173,9 +173,11 @@ func (ff *Ffmpeg) Start() error {
 
 	//Associate the stdio buffers
 	if audioIn := ff.GetBufferAudioIn(); audioIn != nil {
+		audioIn.SetStream(true)
 		process.Stdin = audioIn
 	}
 	if audioOut := ff.GetBufferAudioOut(); audioOut != nil {
+		audioOut.SetStream(true)
 		process.Stdout = audioOut
 	}
 	if stats := ff.GetBufferStats(); stats != nil {
@@ -184,7 +186,7 @@ func (ff *Ffmpeg) Start() error {
 
 	//Start the ffmpeg process
 	ff.process = process
-	ff.thread()
+	go ff.thread()
 	return nil
 }
 
@@ -216,6 +218,12 @@ func (ff *Ffmpeg) Close() error {
 		ff.process = nil
 	}
 	ff.running = false
+	if audioIn := ff.GetBufferAudioIn(); audioIn != nil {
+		audioIn.SetStream(false)
+	}
+	if audioOut := ff.GetBufferAudioOut(); audioOut != nil {
+		audioOut.SetStream(false)
+	}
 	for {
 		//Wait for onExit callback
 		if ff.onExitRan {
