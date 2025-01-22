@@ -125,14 +125,14 @@ func (ff *Ffmpeg) Start() error {
 		//Determine platform-specific library path environment variable
 		var envVar, pathSeparator string
 		switch runtime.GOOS {
-		case "linux", "darwin": //Linux and macOS
+		case "linux", "android", "darwin": //Linux, Android and macOS
 			envVar = "LD_LIBRARY_PATH"
 			pathSeparator = ":"
 		case "windows": //Windows
 			envVar = "PATH"
 			pathSeparator = ";"
 		default:
-			return fmt.Errorf("unsupported platform: %s", runtime.GOOS)
+			return fmt.Errorf("ffmpeg: unsupported platform for custom library path: %s", runtime.GOOS)
 		}
 
 		//Append the library path
