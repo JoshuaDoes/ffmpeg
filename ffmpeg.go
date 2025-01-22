@@ -30,7 +30,7 @@ type Ffmpeg struct {
 	formatIn, formatOut     string
 	channelsIn, channelsOut int
 	rateIn, rateOut         int
-	bitrateOut              int
+	bitrateIn, bitrateOut   int
 	threads                 int
 	precision               string
 	metadata                map[string]string
@@ -307,6 +307,9 @@ func (ff *Ffmpeg) SetInputRate(rate int) {
 func (ff *Ffmpeg) SetOutputRate(rate int) {
 	ff.rateOut = rate
 }
+func (ff *Ffmpeg) SetInputBitrate(bitrate int) {
+	ff.bitrateIn = bitrate
+}
 func (ff *Ffmpeg) SetOutputBitrate(bitrate int) {
 	ff.bitrateOut = bitrate
 }
@@ -361,6 +364,9 @@ func (ff *Ffmpeg) Arguments() []string {
 	}
 	if ff.rateIn > 0 {
 		args = append(args, "-ar", fmt.Sprintf("%d", ff.rateIn))
+	}
+	if ff.bitrateIn > 0 {
+		args = append(args, "-b:a", fmt.Sprintf("%d", ff.bitrateIn))
 	}
 	args = append(args, "-i", input)
 
