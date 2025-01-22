@@ -17,11 +17,12 @@ var (
 )
 
 type Ffmpeg struct {
-	running   bool
-	process   *exec.Cmd
-	errors    []error
-	onExit    func(ff *Ffmpeg)
-	onExitRan bool
+	running       bool
+	process       *exec.Cmd
+	errors        []error
+	onExit        func(ff *Ffmpeg)
+	onExitRan     bool
+	argIn, argOut []string
 
 	name                    string
 	ffmpeg, libraryPath     string
@@ -47,6 +48,8 @@ type Ffmpeg struct {
 
 func NewFFmpeg(codec, format string) *Ffmpeg {
 	ff := new(Ffmpeg)
+	ff.argIn = make([]string, 0)
+	ff.argOut = make([]string, 0)
 	ff.errors = make([]error, 0)
 	ff.buffer = make([]byte, 0)
 	ff.filters = make([]*Filter, 0)
@@ -58,6 +61,14 @@ func NewFFmpeg(codec, format string) *Ffmpeg {
 	ff.SetOutput("")
 	ff.SetBufferStats(crunchio.NewBuffer("stats"))
 	return ff
+}
+
+func (ff *Ffmpeg) AddArgsIn(args ...string) {
+	ff.argIn = append(ff.argIn, args...)
+}
+
+func (ff *Ffmpeg) AddArgsOut(args ...string) {
+	ff.argOut = append(ff.argOut, args...)
 }
 
 func (ff *Ffmpeg) GetName() string {
@@ -368,6 +379,9 @@ func (ff *Ffmpeg) Arguments() []string {
 	if ff.bitrateIn > 0 {
 		args = append(args, "-b:a", fmt.Sprintf("%d", ff.bitrateIn))
 	}
+	if len(ff.argIn) > 0 {
+		args = append(args, ff.argIn...)
+	}
 	args = append(args, "-i", input)
 
 	//Filters
@@ -397,6 +411,9 @@ func (ff *Ffmpeg) Arguments() []string {
 	}
 	if ff.threads > 0 {
 		args = append(args, "-threads", fmt.Sprintf("%d", ff.threads))
+	}
+	if len(ff.argOut) > 0 {
+		args = append(args, ff.argOut...)
 	}
 	args = append(args, output)
 
