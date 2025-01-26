@@ -10,6 +10,8 @@ github.com/JoshuaDoes/crunchio v0.0.3-0.20250120233618-bb0e090b1d9c h1:Ge/SL2UQS
 github.com/JoshuaDoes/crunchio v0.0.3-0.20250120233618-bb0e090b1d9c/go.mod h1:Zk8lv1MlNNb5WpMcNSr8uBgleoE5G3PpXi6MD3JImOA=
 github.com/google/go-cmp v0.5.6 h1:BKbKCqvP6I+rmFHt06ZmyQtvB8xAkWdhFyr0ZUNZcxQ=
 github.com/google/go-cmp v0.5.6/go.mod h1:v8dTdLbMG2kIc/vJvl+f65V22dbkXbowE6jgT/gNBxE=
+github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=
+github.com/google/go-cmp v0.6.0/go.mod h1:17dUlkBOakJ0+DkrSSNjCkIjxS6bF9zb3elmeNGIjoY=
 github.com/superwhiskers/crunch/v3 v3.5.7 h1:N9RLxaR65C36i26BUIpzPXGy2f6pQ7wisu2bawbKNqg=
 github.com/superwhiskers/crunch/v3 v3.5.7/go.mod h1:4ub2EKgF1MAhTjoOCTU4b9uLMsAweHEa89aRrfAypXA=
 golang.org/x/mobile v0.0.0-20250106192035-c31d5b91ecc3 h1:8LrYkH99trX3onYF3dT9frUSRDXokkceG+9tHBaDAFQ=
